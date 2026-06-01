@@ -8,25 +8,26 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: latest
+
       - name: Verify Terraform
-        run: terraform version
-      - name: Terraform Init
         run: |
-          terraform init \
-            -backend-config=environments/dev/backend.hcl \
-            -input=false
+          which terraform
+          terraform version
+
+      - name: Show Files
+        run: ls -R
+
+      - name: Terraform Init
+        run: terraform init -backend-config=environments/dev/backend.hcl -input=false
 
       - name: Terraform Validate
         run: terraform validate
 
       - name: Terraform Plan
-        run: |
-          terraform plan \
-            -input=false
+        run: terraform plan -input=false
